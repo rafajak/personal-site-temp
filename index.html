@@ -49,17 +49,16 @@
     h1, p {
       margin: 0 0 16px 0;
     }
-    .big {
-      font-size: clamp(28px, 6.2vw, 44px);
-      line-height: 1.45;            /* a touch more room on phones */
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      hyphens: auto;
-    }
+
+    /* No hyphenation; only break long strings if absolutely needed */
+    .big,
     .big a {
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      hyphens: auto;
+      font-size: clamp(28px, 6.2vw, 44px);
+      line-height: 1.45;           /* a touch more room on phones */
+      hyphens: none;
+      -webkit-hyphens: none;       /* Safari/iOS */
+      word-break: normal;
+      overflow-wrap: break-word;   /* break only very long unbroken strings */
     }
 
     a {
@@ -111,4 +110,69 @@
     /* Stack form on narrow phones */
     @media (max-width: 480px) {
       form { grid-template-columns: 1fr; max-width: 100%; }
-      .big { font-size
+      .big { font-size: clamp(20px, 5.2vw, 38px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <p class="big">
+        Hello, my name is Raf.<br>
+        Say hi or send me things you think I’ll enjoy at 
+        <a href="mailto:raf.jakubanis@gmail.com">raf.jakubanis@gmail.com</a>.<br><br>
+        You can also add your email below if you’d like me to let you know when I eventually make or do something. Just to set expectations: it’ll probably be something less like an AGI lab and more like an article on the history of the potato in Poland ❤️
+      </p>
+
+      <!-- Hidden iframe to keep user on page after submit -->
+      <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+      <form id="gform" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSfsQiz35CP21D8fB4n9xNlWfoKi76bIDo6H2xeGE6iE61z_0A/formResponse" method="POST" target="hidden_iframe" onsubmit="onSubmitHandler(event)">
+        <input aria-label="Email address" type="email" name="entry.1682301058" placeholder="you@example.com" required />
+        <!-- Honeypot -->
+        <input type="text" name="hp_field" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;">
+        <button type="submit">Subscribe</button>
+      </form>
+
+      <div id="ok" class="alert">Thanks! You’re on the list.</div>
+      <div id="err" class="alert">Hmm, something went wrong. Please try again or email me directly.</div>
+
+      <div class="footer">© <span id="y"></span> Raf Jakubanis</div>
+    </section>
+  </main>
+
+  <script>
+    (function() {
+      var y = document.getElementById('y');
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+
+    function onSubmitHandler(e) {
+      var form = document.getElementById('gform');
+      var ok = document.getElementById('ok');
+      var err = document.getElementById('err');
+      var iframe = document.getElementById('hidden_iframe');
+
+      ok.classList.remove('show');
+      err.classList.remove('show');
+
+      var hp = form.querySelector('input[name="hp_field"]');
+      if (hp && hp.value) {
+        e.preventDefault();
+        return false;
+      }
+
+      iframe.onload = function() {
+        ok.classList.add('show');
+        form.reset();
+      };
+
+      setTimeout(function() {
+        if (!ok.classList.contains('show')) {
+          err.classList.add('show');
+        }
+      }, 8000);
+    }
+  </script>
+</body>
+</html>
