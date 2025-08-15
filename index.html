@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Raf — jakubanis.com</title>
   <meta name="description" content="Raf — contact and mailing list." />
   <!-- CRT/VHS-style font -->
@@ -16,19 +16,29 @@
     html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
       background: #000;
       color: #e6e6e6;
       font-family: 'VT323', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 22px;
       line-height: 1.35;
       letter-spacing: 0.01em;
+      -webkit-text-size-adjust: 100%;
     }
+
+    /* old: min-height: 100dvh; place-items: center; */
     .wrap {
-      min-height: 100dvh;
+      min-height: 100svh;           /* mobile-safe viewport */
       display: grid;
-      place-items: center;
+      align-content: start;         /* avoid clipping under dynamic toolbars */
+      justify-content: start;
       padding: 48px 16px;
     }
+    /* Fallback for older Safari */
+    @supports not (height: 1svh) {
+      .wrap { min-height: -webkit-fill-available; }
+    }
+
     .card {
       width: 100%;
       max-width: var(--maxw);
@@ -38,7 +48,17 @@
     }
     .big {
       font-size: clamp(28px, 6.2vw, 44px);
+      line-height: 1.45;            /* a touch more room on phones */
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
     }
+    .big a {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
     a {
       color: #e6e6e6;
       text-underline-offset: 3px;
@@ -84,6 +104,12 @@
     /* inline alert */
     .alert { display:none; margin-top: 12px; font-size: 18px; }
     .alert.show { display:block; }
+
+    /* Stack form on narrow phones */
+    @media (max-width: 480px) {
+      form { grid-template-columns: 1fr; max-width: 100%; }
+      .big { font-size: clamp(20px, 5.2vw, 38px); }
+    }
   </style>
 </head>
 <body>
